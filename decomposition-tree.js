@@ -133,6 +133,7 @@
       value: 0,
       children: [],
       _childrenById: new Map(),
+      _siblingMax: 0,
       isOthers: false,
       hiddenChildrenCount: 0
     };
@@ -176,6 +177,18 @@
       children = [...visibleChildren, othersNode];
     }
 
+    // Per-parent bar normalization: every child gets stamped with the
+    // largest absolute sibling value, so bar widths compare within the
+    // sibling group instead of against the global root total.
+    if (children.length) {
+      const siblingMax = Math.max(
+        ...children.map(c => Math.abs(toNumber(c.value)))
+      );
+      children.forEach(c => {
+        c._siblingMax = siblingMax;
+      });
+    }
+
     node.children = children;
     delete node._childrenById;
     return node;
@@ -216,7 +229,10 @@
       });
     });
 
-    return [finalizeNode(root, settings)];
+    const finalizedRoot = finalizeNode(root, settings);
+    // Root has no siblings — normalize against itself so its bar fills the card.
+    finalizedRoot._siblingMax = Math.abs(toNumber(finalizedRoot.value));
+    return [finalizedRoot];
   }
 
   function buildTreeFromParentRows(rows, settings) {
@@ -263,7 +279,9 @@
     }
 
     rollup(root);
-    return [finalizeNode(root, settings)];
+    const finalizedRoot = finalizeNode(root, settings);
+    finalizedRoot._siblingMax = Math.abs(toNumber(finalizedRoot.value));
+    return [finalizedRoot];
   }
 
   function extractPathRowsFromSacBinding(binding) {
@@ -496,7 +514,6 @@
         240,
         40 + positioned.length * (s.nodeHeight + s.siblingGap)
       );
-      const maxValue = Math.max(1, ...positioned.map(n => Math.abs(n.value)));
 
       const byIndex = new Map(positioned.map(n => [n.visibleIndex, n]));
 
@@ -522,9 +539,13 @@
           const barX = node.x + 14;
           const barY = node.y + 31;
           const barWidthMax = node.width - 28;
+          const denom = Math.max(
+            1,
+            Math.abs(node._siblingMax ?? node.value ?? 1)
+          );
           const barWidth = Math.max(
             0,
-            (Math.abs(node.value) / maxValue) * barWidthMax
+            (Math.abs(node.value) / denom) * barWidthMax
           );
           const hasChildren = node.children && node.children.length > 0;
           const expanded = this._expanded.has(node.id);
