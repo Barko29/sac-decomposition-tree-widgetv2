@@ -4,19 +4,19 @@
   "name": "Decomposition Tree",
   "description": "Expandable left-to-right decomposition tree with a synthetic Total root, SAC dimensions as hierarchy levels, one measure as bar value, and Top-N plus Others rollup.",
   "newInstancePrefix": "DecompositionTree",
-  "icon": "https://barko29.github.io/sac-decomposition-tree-widget/icon.svg",
+  "icon": "https://barko29.github.io/sac-decomposition-tree-widgetv2/icon.svg",
   "webcomponents": [
     {
       "kind": "main",
       "tag": "com-company-decomposition-tree",
-      "url": "https://barko29.github.io/sac-decomposition-tree-widget/decomposition-tree.js",
+      "url": "https://barko29.github.io/sac-decomposition-tree-widgetv2/decomposition-tree.js",
       "integrity": "",
       "ignoreIntegrity": true
     },
     {
       "kind": "styling",
       "tag": "com-company-decomposition-tree-styling",
-      "url": "https://barko29.github.io/sac-decomposition-tree-widget/decomposition-tree.js",
+      "url": "https://barko29.github.io/sac-decomposition-tree-widgetv2/decomposition-tree.js",
       "integrity": "",
       "ignoreIntegrity": true
     }
